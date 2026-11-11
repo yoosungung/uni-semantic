@@ -1,0 +1,74 @@
+{
+  "kind": "table",
+  "name": "orders",
+  "target": "dw",
+  "db": "dw",
+  "schema": "sales",
+  "table": "orders",
+  "columns": [
+    {
+      "name": "order_id",
+      "type": "bigint",
+      "nullable": false
+    },
+    {
+      "name": "customer_id",
+      "type": "bigint",
+      "nullable": false
+    },
+    {
+      "name": "region_code",
+      "type": "varchar",
+      "nullable": false
+    },
+    {
+      "name": "status_code",
+      "type": "varchar",
+      "nullable": false
+    },
+    {
+      "name": "order_date",
+      "type": "date",
+      "nullable": false
+    },
+    {
+      "name": "sale_amount",
+      "type": "numeric",
+      "nullable": false
+    },
+    {
+      "name": "fx_rate",
+      "type": "numeric",
+      "nullable": false
+    }
+  ],
+  "pk": [
+    "order_id"
+  ],
+  "fk": [
+    {
+      "columns": [
+        "customer_id"
+      ],
+      "references": {
+        "table": "customer",
+        "columns": [
+          "customer_id"
+        ]
+      }
+    }
+  ],
+  "permission_filters": [
+    {
+      "role": "branch",
+      "expression": "region_code = :caller_region"
+    }
+  ],
+  "scope_filter": {
+    "expression": "order_date >= :scope_from AND order_date < :scope_to"
+  },
+  "default_filter": {
+    "expression": "status_code <> 'CANCELLED'"
+  },
+  "role": "all"
+}

@@ -1,0 +1,74 @@
+{
+  "kind": "cube",
+  "name": "sales_ext",
+  "target": "dw",
+  "view": "orders_customer",
+  "description": "확장 필드 예시(hierarchy·role_playing·unresolved).",
+  "dimensions": [
+    {
+      "name": "order_date",
+      "description": "주문 일자.",
+      "type": "date",
+      "column": "order_date",
+      "encryption": false,
+      "role": "all"
+    },
+    {
+      "name": "order_year",
+      "description": "주문 연도.",
+      "type": "date",
+      "expression": "date_trunc('year', order_date)",
+      "dialect": "sql",
+      "encryption": false,
+      "role": "all"
+    },
+    {
+      "name": "ship_date",
+      "description": "출하 일자(역할 재생용 별칭 칼럼).",
+      "type": "date",
+      "column": "order_date",
+      "encryption": false,
+      "role": "all"
+    }
+  ],
+  "facts": [
+    {
+      "name": "sale_amount",
+      "description": "판매 금액.",
+      "type": "amount",
+      "column": "sale_amount",
+      "encryption": false,
+      "role": "all"
+    },
+    {
+      "name": "dax_margin",
+      "description": "DAX 마진(변환 불가 예시).",
+      "type": "amount",
+      "expression": "0",
+      "dialect": "dax",
+      "unresolved": {
+        "dialect": "dax",
+        "expression": "CALCULATE([Sales], USERELATIONSHIP(ShipDate[Date], Dates[Date]))",
+        "warning": "LookML/SQL에 1:1 매핑 없음 — Unresolved로 보존"
+      },
+      "encryption": false,
+      "role": "all"
+    }
+  ],
+  "hierarchies": [
+    {
+      "name": "order_date_h",
+      "levels": [
+        "order_year",
+        "order_date"
+      ]
+    }
+  ],
+  "role_playing": [
+    {
+      "name": "order_date_as_ship",
+      "base_dimension": "order_date",
+      "role": "ShipDate"
+    }
+  ]
+}

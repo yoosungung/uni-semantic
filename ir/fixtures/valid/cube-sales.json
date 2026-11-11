@@ -1,0 +1,94 @@
+{
+  "kind": "cube",
+  "name": "sales",
+  "target": "dw",
+  "view": "orders_customer",
+  "description": "주문과 고객을 묶은 매출.",
+  "dimensions": [
+    {
+      "name": "order_date",
+      "description": "주문 일자.",
+      "type": "date",
+      "column": "order_date",
+      "encryption": false,
+      "role": "all"
+    },
+    {
+      "name": "order_year",
+      "description": "주문 연도(order_date 절단).",
+      "type": "date",
+      "expression": "date_trunc('year', order_date)",
+      "encryption": false,
+      "role": "all"
+    },
+    {
+      "name": "region_code",
+      "description": "판매 지역 코드.",
+      "type": "code",
+      "column": "region_code",
+      "encryption": false,
+      "as_code": {
+        "table": "region_codes",
+        "key_column": "code",
+        "value_column": "name",
+        "where": "lang = 'ko'"
+      },
+      "samples": ["KR", "US", "JP"],
+      "role": "all"
+    },
+    {
+      "name": "status_code",
+      "description": "주문 상태 코드.",
+      "type": "code",
+      "column": "status_code",
+      "encryption": false,
+      "as_code": {
+        "table": "status_codes",
+        "key_column": "code",
+        "value_column": "name"
+      },
+      "samples": ["PAID", "PENDING", "CANCELLED"],
+      "role": "all"
+    },
+    {
+      "name": "customer_id",
+      "description": "고객 식별자.",
+      "type": "string",
+      "column": "customer_id",
+      "encryption": false,
+      "role": "all"
+    }
+  ],
+  "facts": [
+    {
+      "name": "sale_amount",
+      "description": "판매 금액(원 통화 전).",
+      "type": "amount",
+      "column": "sale_amount",
+      "encryption": false,
+      "role": [
+        "finance"
+      ]
+    },
+    {
+      "name": "fx_rate",
+      "description": "원화 환산 환율.",
+      "type": "fx",
+      "column": "fx_rate",
+      "encryption": false,
+      "role": [
+        "finance"
+      ]
+    },
+    {
+      "name": "krw_amount",
+      "description": "원화 환산 판매 금액.",
+      "type": "amount",
+      "expression": "sale_amount * fx_rate",
+      "encryption": false,
+      "role": [
+        "finance"
+      ]
+    }
+  ]
+}

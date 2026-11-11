@@ -1,0 +1,13 @@
+{
+  "kind": "metric",
+  "name": "bad_u",
+  "description": "unresolved without warning",
+  "cube": "sales",
+  "expression": "sum(x)",
+  "aggregation": "cube",
+  "filter": null,
+  "unresolved": {
+    "dialect": "dax",
+    "expression": "CALCULATE(1)"
+  }
+}

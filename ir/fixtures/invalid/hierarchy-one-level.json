@@ -1,0 +1,17 @@
+{
+  "kind": "cube",
+  "name": "bad_h",
+  "target": "dw",
+  "view": "orders_customer",
+  "description": "hierarchy levels < 2",
+  "dimensions": [],
+  "facts": [],
+  "hierarchies": [
+    {
+      "name": "h",
+      "levels": [
+        "only_one"
+      ]
+    }
+  ]
+}
