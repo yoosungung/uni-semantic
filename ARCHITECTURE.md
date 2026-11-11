@@ -7,12 +7,13 @@
 ## 1. 계약사항 (불변 규칙)
 
 1. **Hub-and-Spoke만.** 이종 ROLAP/BI 메타데이터 간 N×M 직접 변환을 두지 않는다. 모든 경로는 Frontend/Parser → **Universal Semantic IR** → Backend/Emitter 다.
-2. **IR 정본은 이 저장소.** JSON Schema 기반 Universal Semantic IR을 허브로 둔다. 출발점은 `sql-mcp`의 `semantic/schema/document.schema.json`(`table` / `view` / `cube` / `metric` / `segment` 및 join relationship·grain)이며, BI 상호변환에 맞게 **확장·정련**한다. 런타임은 `sql-mcp`에 종속하지 않는다. OSI(Open Semantic Interchange) 등은 참고만 하고 허브로 채택하지 않는다.
+2. **IR 정본은 이 저장소.** JSON Schema 기반 Universal Semantic IR을 허브로 둔다. 출발점은 `sql-mcp`의 `semantic/schema/document.schema.json`을 **복사**한 뒤(`table` / `view` / `cube` / `metric` / `segment` 및 join relationship·grain) BI 상호변환에 맞게 **확장·정련**한다. 패키지 참조로 묶지 않는다. 런타임은 `sql-mcp`에 종속하지 않는다. IR이 안정화된 뒤에는 `sql-mcp`가 이 스키마에 맞추는 방향을 검토한다. OSI 등은 참고만 하고 허브로 채택하지 않는다.
 3. **파이프라인.** Source Extractor/Parser → Common Semantic IR → Target Generator/Emitter. 스포크(프론트·백엔드)는 플러그인 모듈이며, 벤더·버전별 스키마 어댑터를 독립 유지한다.
 4. **자동 변환 범위.** 물리 스키마, 조인(타입·카디널리티), 단순 집계 메트릭(`SUM` / `COUNT` / `AVG` 등 공통 표준)은 자동 컴파일 대상이다. 도구 고유 고급 수식의 무리한 100% 번역을 약속하지 않는다.
 5. **Unresolved Expression.** 1:1 변환이 불가능한 방언 수식은 격리한다. 원본 식을 보존하고 경고 리포트를 발급한다. 우회는 SQL 푸시다운 뷰 또는 수동/리포트 처리로 둔다.
 6. **조인·함정 정규화.** M:N, Role-Playing Dimension, Chasm/Fan Trap 해석 차이는 IR에 조인 방향성·역할·관계를 명시한 뒤, 타깃 엔진 권장 모델링 패턴(브릿지 테이블 등)으로 정규화해 emit한다.
-7. **문서 우선 · TDD.** 계약·계획 변경은 문서를 먼저(또는 함께) 고친다. 코드 도입 시 스켈레톤 → 테스트 → 구현.
+7. **언어.** 코어·`slg` CLI는 **Rust**(Cargo workspace). IR 정본은 JSON Schema. Excel·레거시 XML 등 스포크는 필요 시 **Python 어댑터**를 두되, 입출력은 IR JSON으로만 코어와 연결한다.
+8. **문서 우선 · TDD.** 계약·계획 변경은 문서를 먼저(또는 함께) 고친다. 코드 도입 시 스켈레톤 → 테스트 → 구현.
 
 ## 2. 토폴로지 (Hub-and-Spoke)
 
@@ -56,7 +57,15 @@ BI Matrix (Excel)   ──┘   │ (table, view, cube, metric…)  │
 | `cube` + `dimensions` / `facts` | Logical Entities (차원·팩트·grain) |
 | `metric` / `segment` | Measures / Aggregations · 필터 조각 |
 
-**확장 예정 (이름·필드는 ROADMAP 미결정으로 둔다):** Hierarchy, Role-Playing Dimension, Unresolved Expression(방언·원본 식·경고), source dialect provenance, snowflake형 복합 조인 표현 보강.
+**확장 식별자 (확정):**
+
+| 식별자 | 역할 |
+|--------|------|
+| `dialect` | 식·문서의 방언 태그(`dax` / `lookml` / `lod` / `mstr` / `sql` 등). provenance는 별도 필드명이 아니라 `dialect`(+원본 식)로 표현한다. |
+| `unresolved_expression` | 자동 변환 불가 식. `dialect`, 원본 텍스트, 경고를 보존한다. |
+| `hierarchy` | 계층 구조 |
+| `role_playing` | Role-Playing Dimension |
+| (보강) | snowflake형 복합 조인 표현 |
 
 검증: 변환 전후 메타에서 생성되는 물리 SQL의 동등성(Equivalence)을 단위 테스트로 검증한다.
 
@@ -72,5 +81,7 @@ BI Matrix (Excel)   ──┘   │ (table, view, cube, metric…)  │
 
 ## 5. CLI · 외부 연동 (형태만)
 
-- CLI 이름: **`slg`** (Semantic Layer Generator). 예: `slg convert --from pbip --to lookml`.
+- CLI 이름: **`slg`** (Semantic Layer Generator). Rust 바이너리. 예: `slg convert --from pbip --to lookml`.
+- 스택: Rust(`clap` · `serde` 등) + IR JSON Schema. Python 스포크는 서브프로세스/사이드카로 IR만 교환.
+- Schema Diff는 **CLI만** (`slg` 하위 명령). 별도 GUI는 두지 않는다.
 - Phase 4에서 IR → dbt Semantic Layer YAML · Cube.js · `sql-mcp`/MCP emit을 둔다. MCP는 여러 BI 큐브/조인을 단일 IR 스키마로 조회하게 한다.

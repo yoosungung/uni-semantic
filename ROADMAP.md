@@ -9,6 +9,10 @@
 ## 완료
 
 - 기획 문서: Hub-and-Spoke 전략, IR 출발점(`sql-mcp` `document.schema.json` 확장·정련), Phase 1–4, CLI=`slg` — [ARCHITECTURE.md](ARCHITECTURE.md) · 이 파일 · [README.md](README.md).
+- 구현 스택: 코어·`slg` = **Rust**(Cargo); IR = JSON Schema; Excel/레거시 XML 스포크는 필요 시 **Python 어댑터**(IR JSON만 교환).
+- IR↔`sql-mcp`: 스키마 **복사** 후 이 저장소에서 확장. 안정화 후 `sql-mcp`를 이 스키마에 맞추는 방향을 검토.
+- IR 확장 식별자: `dialect`, `unresolved_expression`, `hierarchy`, `role_playing` — [ARCHITECTURE.md](ARCHITECTURE.md) §3.
+- Schema Diff: **CLI만** (GUI 없음).
 
 ## Phase 1 — IR 스펙 · Power BI ↔ Looker MVP
 
@@ -43,14 +47,11 @@
 
 - Emitter: dbt Semantic Layer YAML · Cube.js 데이터 모델.
 - IR 기반 MCP 연동(`sql-mcp`/NL2SQL 에이전트가 단일 스키마로 조회).
-- **`slg`** CLI 패키징 (`slg convert --from pbip --to lookml`) · Schema Diff 도구.
+- **`slg`** CLI 패키징 (`slg convert --from pbip --to lookml`) · Schema Diff(`slg` 하위 명령, CLI만).
 
 ## 미결정
 
-- IR 확장 필드 최종 이름(Hierarchy, Role-Playing, Unresolved Expression, provenance 등).
-- `sql-mcp` 스키마와의 동기화 방식(복사 vs 패키지 참조) 및 버전 정책.
-- 구현 언어·빌드 툴체인.
-- Schema Diff의 UI 형태(CLI 전용 vs GUI).
+- (없음 — 기획 단계 미결정은 위 「완료」로 해소. Phase 구현 중 새 이슈만 여기에 추가.)
 
 ## 구현 시 작업 규칙
 
