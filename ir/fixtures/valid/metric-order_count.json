@@ -1,0 +1,11 @@
+{
+  "kind": "metric",
+  "name": "order_count",
+  "description": "지역·일자별 주문 건수.",
+  "cube": "sales",
+  "expression": "count(order_id)",
+  "aggregation": "group",
+  "group_by": ["region_code", "order_date"],
+  "filter": null,
+  "role": "all"
+}

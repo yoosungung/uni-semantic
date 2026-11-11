@@ -1,0 +1,11 @@
+{
+  "kind": "metric",
+  "name": "avg_sale",
+  "description": "지역·일자별 평균 판매 금액.",
+  "cube": "sales",
+  "expression": "avg(sale_amount)",
+  "aggregation": "group",
+  "group_by": ["region_code", "order_date"],
+  "filter": null,
+  "role": "all"
+}

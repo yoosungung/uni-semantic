@@ -83,3 +83,50 @@ test("schema $defs include §3 extension identifiers", async () => {
     assert.ok(schema.$defs?.[key], `missing $defs.${key}`);
   }
 });
+
+test("Phase 1 basic-element fixtures cover pk/fk, inner|left+relationship, sum|count|avg", async () => {
+  const files = await listJson(validDir);
+  const docs = await Promise.all(files.map(async (file) => ({
+    file: path.basename(file),
+    doc: await loadJson(file),
+  })));
+
+  const tables = docs.filter(({ doc }) => doc.kind === "table");
+  assert.ok(
+    tables.some(
+      ({ doc }) =>
+        Array.isArray(doc.pk) &&
+        doc.pk.length >= 1 &&
+        Array.isArray(doc.fk) &&
+        doc.fk.length >= 1,
+    ),
+    "expected ≥1 table fixture with nonempty pk and fk",
+  );
+
+  const joinTypes = new Set();
+  for (const { doc } of docs.filter(({ doc }) => doc.kind === "view")) {
+    for (const join of doc.joins ?? []) {
+      if (
+        (join.type === "inner" || join.type === "left") &&
+        typeof join.relationship === "string"
+      ) {
+        joinTypes.add(join.type);
+      }
+    }
+  }
+  assert.ok(joinTypes.has("inner"), "expected inner join fixture with relationship");
+  assert.ok(joinTypes.has("left"), "expected left join fixture with relationship");
+
+  const measureFns = new Set();
+  for (const { doc } of docs.filter(({ doc }) => doc.kind === "metric")) {
+    const m = String(doc.expression ?? "").match(/^\s*(sum|count|avg)\s*\(/i);
+    if (m) measureFns.add(m[1].toLowerCase());
+    assert.ok(
+      ["group", "rollup", "cube", "grouping_sets"].includes(doc.aggregation),
+      `${doc.name}: aggregation enum is GROUPING axis, not measure fn`,
+    );
+  }
+  for (const fn of ["sum", "count", "avg"]) {
+    assert.ok(measureFns.has(fn), `expected ≥1 metric.expression using ${fn}(...)`);
+  }
+});
