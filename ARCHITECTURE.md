@@ -7,7 +7,7 @@
 ## 1. 계약사항 (불변 규칙)
 
 1. **Hub-and-Spoke만.** 이종 ROLAP/BI 메타데이터 간 N×M 직접 변환을 두지 않는다. 모든 경로는 Frontend/Parser → **Universal Semantic IR** → Backend/Emitter 다.
-2. **IR 정본은 이 저장소.** JSON Schema 기반 Universal Semantic IR을 허브로 둔다. 출발점은 `sql-mcp`의 `semantic/schema/document.schema.json`을 **복사**한 뒤(`table` / `view` / `cube` / `metric` / `segment` 및 join relationship·grain) BI 상호변환에 맞게 **확장·정련**한다. 패키지 참조로 묶지 않는다. 런타임은 `sql-mcp`에 종속하지 않는다. IR이 안정화된 뒤에는 `sql-mcp`가 이 스키마에 맞추는 방향을 검토한다. OSI 등은 참고만 하고 허브로 채택하지 않는다.
+2. **IR 정본은 이 저장소.** JSON Schema 기반 Universal Semantic IR을 허브로 둔다. 출발점은 `sql-mcp`의 `semantic/schema/document.schema.json`을 **복사**한 뒤(`table` / `view` / `cube` / `metric` / `segment` 및 join relationship·grain) BI 상호변환에 맞게 **확장·정련**(변경 전 eric.yoo 승인 필요)한다. 패키지 참조로 묶지 않는다. 런타임은 `sql-mcp`에 종속하지 않는다. IR이 안정화된 뒤에는 `sql-mcp`가 이 스키마에 맞추는 방향을 검토한다. OSI 등은 참고만 하고 허브로 채택하지 않는다.
 3. **파이프라인.** Source Extractor/Parser → Common Semantic IR → Target Generator/Emitter. 스포크(프론트·백엔드)는 플러그인 모듈이며, 벤더·버전별 스키마 어댑터를 독립 유지한다.
 4. **자동 변환 범위.** 물리 스키마, 조인(타입·카디널리티), 단순 집계 메트릭(`SUM` / `COUNT` / `AVG` 등 공통 표준)은 자동 컴파일 대상이다. 도구 고유 고급 수식의 무리한 100% 번역을 약속하지 않는다.
 5. **Unresolved Expression.** 1:1 변환이 불가능한 방언 수식은 격리한다. 원본 식을 보존하고 경고 리포트를 발급한다. 우회는 SQL 푸시다운 뷰 또는 수동/리포트 처리로 둔다.
@@ -36,13 +36,13 @@ BI Matrix (Excel)   ──┘   │ (table, view, cube, metric…)  │
                                           └─▶ sql-mcp / NL2SQL MCP
 ```
 
-| 경계 (경로 계약) | 책임 |
-|------------------|------|
-| `ir/` | Universal Semantic IR JSON Schema 정본·예시 (코드 도입 시) |
-| `frontends/<tool>/` | 소스 메타 → IR 파서/추출기 |
-| `backends/<tool>/` | IR → 타깃 포맷 생성기 |
-| `cli/` | **`slg`** (Semantic Layer Generator) 바이너리 |
-| `mcp/` | IR 조회·NL2SQL 연동 MCP 표면 (후기 Phase) |
+| 경계 (경로 계약)          | 책임                                                |
+| ------------------- | ------------------------------------------------- |
+| `ir/`               | Universal Semantic IR JSON Schema 정본·예시 (코드 도입 시) |
+| `frontends/<tool>/` | 소스 메타 → IR 파서/추출기                                 |
+| `backends/<tool>/`  | IR → 타깃 포맷 생성기                                    |
+| `cli/`              | `slg` (Semantic Layer Generator) 바이너리             |
+| `mcp/`              | IR 조회·NL2SQL 연동 MCP 표면 (후기 Phase)                 |
 
 지금은 경로만 계약한다. 빈 stub 폴더는 만들지 않는다.
 
@@ -81,7 +81,7 @@ BI Matrix (Excel)   ──┘   │ (table, view, cube, metric…)  │
 
 ## 5. CLI · 외부 연동 (형태만)
 
-- CLI 이름: **`slg`** (Semantic Layer Generator). Rust 바이너리. 예: `slg convert --from pbip --to lookml`.
+- CLI 이름: `slg` (Semantic Layer Generator). Rust 바이너리. 예: `slg convert --from pbip --to lookml`.
 - 스택: Rust(`clap` · `serde` 등) + IR JSON Schema. Python 스포크는 서브프로세스/사이드카로 IR만 교환.
 - Schema Diff는 **CLI만** (`slg` 하위 명령). 별도 GUI는 두지 않는다.
 - Phase 4에서 IR → dbt Semantic Layer YAML · Cube.js · `sql-mcp`/MCP emit을 둔다. MCP는 여러 BI 큐브/조인을 단일 IR 스키마로 조회하게 한다.
