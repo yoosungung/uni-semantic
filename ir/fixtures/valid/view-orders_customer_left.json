@@ -1,0 +1,81 @@
+{
+  "kind": "view",
+  "name": "orders_customer_left",
+  "target": "dw",
+  "combine": "join",
+  "sources": [
+    {
+      "kind": "table",
+      "table": "orders"
+    },
+    {
+      "kind": "table",
+      "table": "customer"
+    }
+  ],
+  "joins": [
+    {
+      "left": "orders",
+      "right": "customer",
+      "type": "left",
+      "relationship": "many_to_one",
+      "on": [
+        {
+          "left_column": "customer_id",
+          "right_column": "customer_id"
+        }
+      ]
+    }
+  ],
+  "columns": [
+    {
+      "name": "order_id",
+      "mappings": [
+        {
+          "source": "orders",
+          "column": "order_id"
+        }
+      ]
+    },
+    {
+      "name": "customer_id",
+      "mappings": [
+        {
+          "source": "orders",
+          "column": "customer_id"
+        },
+        {
+          "source": "customer",
+          "column": "customer_id"
+        }
+      ]
+    },
+    {
+      "name": "region_code",
+      "mappings": [
+        {
+          "source": "orders",
+          "column": "region_code"
+        }
+      ]
+    },
+    {
+      "name": "order_date",
+      "mappings": [
+        {
+          "source": "orders",
+          "column": "order_date"
+        }
+      ]
+    },
+    {
+      "name": "sale_amount",
+      "mappings": [
+        {
+          "source": "orders",
+          "column": "sale_amount"
+        }
+      ]
+    }
+  ]
+}

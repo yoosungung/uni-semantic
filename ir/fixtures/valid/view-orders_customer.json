@@ -18,6 +18,7 @@
       "left": "orders",
       "right": "customer",
       "type": "inner",
+      "relationship": "many_to_one",
       "on": [
         {
           "left_column": "customer_id",

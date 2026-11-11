@@ -18,6 +18,20 @@
 - 이 저장소 `$id`: `https://uni-semantic.local/ir/document.schema.json` (식별자일 뿐 HTTP 다운로드 주소 아님).
 - 빌드·런타임에서 `sql-mcp` 경로/패키지를 참조하지 않는다.
 
+## Phase 1 기본 요소 매핑
+
+스포크·parity가 참조하는 Phase 1 표면(스키마 필드는 기존 `document.schema.json` 표현력만 사용; 필드 추가·required 승격은 `@eric` 승인 전 금지).
+
+| 개념 | IR 위치 | Phase 1 픽스처 기대 |
+|------|---------|---------------------|
+| 테이블 · PK/FK | `table.pk` / `table.fk` | nonempty `pk`·`fk` ≥1 (`table-orders.json`) |
+| 조인 타입 | `viewJoin.type` ∈ {`inner`,`left`} (스키마는 `right`/`full`도 허용) | `inner`·`left` 각 ≥1 |
+| 카디널리티 | `viewJoin.relationship` ∈ {`many_to_one`,`one_to_one`,`one_to_many`} | Phase 1 픽스처에서는 **채움 필수**(스키마는 여전히 optional) |
+| 단순 집계(measure) | `metric.expression`의 `sum` / `count` / `avg` | 각 함수 ≥1 fixture |
+| GROUPING 축 | `metric.aggregation` ∈ {`group`,`rollup`,`cube`,`grouping_sets`} | measure 함수와 **별개** — `sum`/`count`/`avg`로 재해석 금지 |
+
+검증: `test/validate.test.js`의 Phase 1 커버 테스트가 위 표를 고정한다.
+
 ## §3 확장 (`$defs`)
 
 | `$defs` | 부착 | 비고 |
