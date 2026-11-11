@@ -124,6 +124,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "sql_parity"
+version = "0.1.0"
+dependencies = [
+ "backend_looker",
+ "frontend_looker",
+ "frontend_powerbi",
+ "thiserror",
+ "uni_semantic_ir",
+]
+
+[[package]]
 name = "syn"
 version = "3.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
