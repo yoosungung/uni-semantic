@@ -1,0 +1,9 @@
+[package]
+name = "backend_looker"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror = { workspace = true }
+uni_semantic_ir = { workspace = true }

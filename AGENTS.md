@@ -36,5 +36,5 @@ This file provides guidance to AI coding assistants (Claude Code, Codex, Gemini,
  
 ## 3. Status
  
-기획 문서 확정 + Phase 1 IR 스키마 정본(`ir/document.schema.json`, fixtures·Ajv 검증). 다음: Power BI ↔ Looker 스포크 — [ARCHITECTURE.md](ARCHITECTURE.md) · [ROADMAP.md](ROADMAP.md) · [ir/DESIGN.md](ir/DESIGN.md).
+기획 문서 + Phase 1 IR 스키마(`ir/`) + Power BI↔Looker 스포크 MVP(`frontends|backends/{powerbi,looker}`, Cargo workspace). — [ARCHITECTURE.md](ARCHITECTURE.md) · [ROADMAP.md](ROADMAP.md) · [ir/DESIGN.md](ir/DESIGN.md).
 
