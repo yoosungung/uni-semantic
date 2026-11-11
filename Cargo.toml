@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+members = [
+  "ir/rust",
+  "frontends/powerbi",
+  "frontends/looker",
+  "backends/powerbi",
+  "backends/looker",
+  "tests/mvp_roundtrip",
+]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+version = "0.1.0"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+uni_semantic_ir = { path = "ir/rust" }
+frontend_powerbi = { path = "frontends/powerbi" }
+frontend_looker = { path = "frontends/looker" }
+backend_powerbi = { path = "backends/powerbi" }
+backend_looker = { path = "backends/looker" }

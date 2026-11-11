@@ -1,0 +1,46 @@
+{
+  "compatibilityLevel": 1567,
+  "model": {
+    "tables": [
+      {
+        "name": "orders",
+        "annotations": [
+          { "name": "uni_semantic.db", "value": "dw" },
+          { "name": "uni_semantic.schema", "value": "sales" },
+          { "name": "uni_semantic.table", "value": "orders" }
+        ],
+        "columns": [
+          { "name": "order_id", "dataType": "int64", "sourceColumn": "order_id", "isKey": true, "isNullable": false },
+          { "name": "customer_id", "dataType": "int64", "sourceColumn": "customer_id", "isNullable": false },
+          { "name": "sale_amount", "dataType": "decimal", "sourceColumn": "sale_amount", "isNullable": false }
+        ],
+        "measures": [
+          { "name": "revenue", "expression": "SUM(orders[sale_amount])" }
+        ]
+      },
+      {
+        "name": "customer",
+        "annotations": [
+          { "name": "uni_semantic.db", "value": "dw" },
+          { "name": "uni_semantic.schema", "value": "sales" },
+          { "name": "uni_semantic.table", "value": "customer" }
+        ],
+        "columns": [
+          { "name": "customer_id", "dataType": "int64", "sourceColumn": "customer_id", "isKey": true, "isNullable": false },
+          { "name": "region_code", "dataType": "string", "sourceColumn": "region_code", "isNullable": false }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "orders_customer",
+        "fromTable": "orders",
+        "fromColumn": "customer_id",
+        "toTable": "customer",
+        "toColumn": "customer_id",
+        "fromCardinality": "many",
+        "toCardinality": "one"
+      }
+    ]
+  }
+}

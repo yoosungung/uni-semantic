@@ -11,6 +11,7 @@
 | `fixtures/invalid/` | 스키마 거절 예시 |
 | `test/validate.test.js` | Ajv(draft 2020-12) 검증 |
 | `package.json` | 검증용 Node 의존성(`ajv`) — 런타임/`sql-mcp` 패키지 참조 없음 |
+| `rust/` | 스포크용 serde 타입 헬퍼(`uni_semantic_ir`) — **스키마 정본은 계속 `document.schema.json`** |
 
 ## 출처·`$id`
 
@@ -50,4 +51,7 @@ hierarchy/role_playing 최소 shape가 후속 스포크 AC와 어긋나면 티�
 cd ir
 npm install
 npm test
+
+# 스포크 serde 헬퍼(워크스페이스 루트)
+cargo test -p uni_semantic_ir
 ```
