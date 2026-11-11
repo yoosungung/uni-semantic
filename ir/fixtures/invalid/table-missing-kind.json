@@ -1,0 +1,21 @@
+{
+  "name": "broken",
+  "target": "dw",
+  "db": "dw",
+  "schema": "sales",
+  "table": "orders",
+  "columns": [
+    {
+      "name": "id",
+      "type": "int",
+      "nullable": false
+    }
+  ],
+  "pk": [
+    "id"
+  ],
+  "fk": [],
+  "permission_filters": [],
+  "scope_filter": null,
+  "default_filter": null
+}

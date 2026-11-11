@@ -1,0 +1,12 @@
+{
+  "name": "uni-semantic-ir",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/validate.test.js"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "segment",
+  "name": "paid",
+  "description": "결제 완료(PAID) 주문만.",
+  "cube": "sales",
+  "filter": { "expression": "status_code = 'PAID'" },
+  "role": "all"
+}
