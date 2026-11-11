@@ -23,7 +23,7 @@ factory `pm-roadmap-sync`는 `##` 아래 **`- [ ]` / `- [x]`** 만 enqueue한다
 - [ ] IR JSON Schema: `sql-mcp` document 스키마를 출발으로 확장·정련 (`ir/`).
 - [x] Frontend/Backend: **Power BI (TMDL/BIM)** ↔ **Looker (LookML)**.
 - [x] 기본 요소: 테이블, PK/FK 조인(`Inner` / `Left` / cardinality), 단순 집계(`SUM` / `COUNT` / `AVG`).
-- [ ] 검증: 변환 전후 물리 SQL parity 단위 테스트 하네스.
+- [x] 검증: 변환 전후 물리 SQL parity 단위 테스트 하네스.
 
 ## Phase 2 — XML·국산 엔터프라이즈 스포크
 

@@ -6,6 +6,7 @@ members = [
   "frontends/looker",
   "backends/powerbi",
   "backends/looker",
+  "parity",
   "tests/mvp_roundtrip",
 ]
 
