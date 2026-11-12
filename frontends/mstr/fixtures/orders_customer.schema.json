@@ -1,0 +1,135 @@
+{
+  "db": "dw",
+  "tables": [
+    {
+      "information": {
+        "objectId": "TBL-ORDERS",
+        "subType": "logical_table",
+        "name": "ORDERS"
+      },
+      "physicalTable": {
+        "tableName": "orders",
+        "namespace": "sales",
+        "type": "normal",
+        "columns": [
+          {
+            "columnName": "ORDER_ID",
+            "dataType": { "type": "integer" }
+          },
+          {
+            "columnName": "CUSTOMER_ID",
+            "dataType": { "type": "integer" }
+          },
+          {
+            "columnName": "SALE_AMOUNT",
+            "dataType": { "type": "double" }
+          }
+        ]
+      },
+      "tableKey": [
+        {
+          "objectId": "ATTR-ORDER",
+          "subType": "attribute",
+          "name": "Order"
+        }
+      ],
+      "attributes": [
+        {
+          "information": {
+            "objectId": "ATTR-ORDER",
+            "subType": "attribute",
+            "name": "Order"
+          },
+          "forms": [
+            {
+              "name": "ID",
+              "expression": { "text": "ORDER_ID" }
+            }
+          ]
+        },
+        {
+          "information": {
+            "objectId": "ATTR-CUSTOMER",
+            "subType": "attribute",
+            "name": "Customer"
+          },
+          "forms": [
+            {
+              "name": "ID",
+              "expression": { "text": "CUSTOMER_ID" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "information": {
+        "objectId": "TBL-LU-CUSTOMER",
+        "subType": "logical_table",
+        "name": "LU_CUSTOMER"
+      },
+      "physicalTable": {
+        "tableName": "customer",
+        "namespace": "sales",
+        "type": "normal",
+        "columns": [
+          {
+            "columnName": "CUSTOMER_ID",
+            "dataType": { "type": "integer" }
+          },
+          {
+            "columnName": "REGION_CODE",
+            "dataType": { "type": "nstring" }
+          }
+        ]
+      },
+      "tableKey": [
+        {
+          "objectId": "ATTR-CUSTOMER",
+          "subType": "attribute",
+          "name": "Customer"
+        }
+      ],
+      "attributes": [
+        {
+          "information": {
+            "objectId": "ATTR-CUSTOMER",
+            "subType": "attribute",
+            "name": "Customer"
+          },
+          "forms": [
+            {
+              "name": "ID",
+              "expression": { "text": "CUSTOMER_ID" }
+            },
+            {
+              "name": "DESC",
+              "expression": { "text": "REGION_CODE" }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "parent": {
+        "objectId": "ATTR-CUSTOMER",
+        "subType": "attribute",
+        "name": "Customer"
+      },
+      "child": {
+        "objectId": "ATTR-ORDER",
+        "subType": "attribute",
+        "name": "Order"
+      },
+      "relationshipType": "one_to_many",
+      "relationshipTable": {
+        "objectId": "TBL-ORDERS",
+        "subType": "logical_table",
+        "name": "ORDERS"
+      },
+      "joinType": "left"
+    }
+  ]
+}

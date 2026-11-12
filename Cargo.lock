@@ -181,6 +181,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "frontend_mstr"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
+ "uni_semantic_ir",
+]
+
+[[package]]
 name = "frontend_powerbi"
 version = "0.1.0"
 dependencies = [
