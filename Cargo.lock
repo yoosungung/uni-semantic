@@ -201,6 +201,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "frontend_spotfire"
+version = "0.1.0"
+dependencies = [
+ "roxmltree",
+ "thiserror",
+ "uni_semantic_ir",
+]
+
+[[package]]
 name = "frontend_tableau"
 version = "0.1.0"
 dependencies = [
