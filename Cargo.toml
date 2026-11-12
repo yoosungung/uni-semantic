@@ -7,6 +7,7 @@ members = [
   "frontends/tableau",
   "frontends/bi_matrix",
   "frontends/sap_bo",
+  "frontends/spotfire",
   "backends/powerbi",
   "backends/looker",
   "parity",
@@ -28,5 +29,6 @@ frontend_looker = { path = "frontends/looker" }
 frontend_tableau = { path = "frontends/tableau" }
 frontend_bi_matrix = { path = "frontends/bi_matrix" }
 frontend_sap_bo = { path = "frontends/sap_bo" }
+frontend_spotfire = { path = "frontends/spotfire" }
 backend_powerbi = { path = "backends/powerbi" }
 backend_looker = { path = "backends/looker" }

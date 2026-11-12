@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- uni-semantic PoC fixture: standalone Spotfire Information Link XML (not DXP / library zip). -->
+<informationLink name='orders_customer' db='dw'>
+  <columns>
+    <column name='order_id' schema='sales' table='orders' column='order_id' dataType='integer' key='true' />
+    <column name='customer_id' schema='sales' table='orders' column='customer_id' dataType='integer' />
+    <column name='sale_amount' schema='sales' table='orders' column='sale_amount' dataType='real' />
+    <column name='customer_id' schema='sales' table='customer' column='customer_id' dataType='integer' key='true' />
+    <column name='region_code' schema='sales' table='customer' column='region_code' dataType='string' />
+  </columns>
+  <joins>
+    <join type='left'>
+      <left table='orders' column='customer_id' />
+      <right table='customer' column='customer_id' />
+    </join>
+  </joins>
+</informationLink>
