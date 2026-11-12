@@ -37,5 +37,5 @@ This file provides guidance to AI coding assistants (Claude Code, Codex, Gemini,
  
 ## 3. Status
  
-기획 문서 + Phase 1 IR 스키마(`ir/`) + Power BI↔Looker 스포크 MVP + 물리 SQL parity 하네스(`parity/`) + Phase 2 Tableau `.tds` 파서(`frontends/tableau/`). — [ARCHITECTURE.md](ARCHITECTURE.md) · [ROADMAP.md](ROADMAP.md) · [ir/DESIGN.md](ir/DESIGN.md) · [parity/DESIGN.md](parity/DESIGN.md) · [frontends/tableau/DESIGN.md](frontends/tableau/DESIGN.md).
+기획 문서 + Phase 1 IR 스키마(`ir/`) + Power BI↔Looker 스포크 MVP + 물리 SQL parity 하네스(`parity/`) + Phase 2 Tableau `.tds` · BI Matrix `.xlsx` 정의서 파서. — [ARCHITECTURE.md](ARCHITECTURE.md) · [ROADMAP.md](ROADMAP.md) · [ir/DESIGN.md](ir/DESIGN.md) · [parity/DESIGN.md](parity/DESIGN.md) · [frontends/tableau/DESIGN.md](frontends/tableau/DESIGN.md) · [frontends/bi_matrix/DESIGN.md](frontends/bi_matrix/DESIGN.md).
 
