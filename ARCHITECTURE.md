@@ -63,9 +63,9 @@ BI Matrix (Excel)   ──┘   │ (table, view, cube, metric…)  │
 |--------|------|
 | `dialect` | 식·문서의 방언 태그(`dax` / `lookml` / `lod` / `mstr` / `sql` 등). provenance는 별도 필드명이 아니라 `dialect`(+원본 식)로 표현한다. |
 | `unresolved_expression` | 자동 변환 불가 식. `dialect`, 원본 텍스트, 경고를 보존한다. |
-| `hierarchy` | 계층 구조 |
+| `hierarchy` | 계층 구조 (`cube.hierarchies[]`: `name`+`levels`≥2; optional `description`) |
 | `role_playing` | Role-Playing Dimension |
-| (보강) | snowflake형 복합 조인 표현 |
+| `snowflake_path` | snowflake형 복합 조인 중간 경로 (`viewJoin.snowflake_path`; 생략=직접 조인, 빈 배열 금지) |
 
 검증: 변환 전후 메타에서 생성되는 물리 SQL의 동등성(Equivalence)을 단위 테스트로 검증한다.
 

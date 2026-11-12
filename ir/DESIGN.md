@@ -39,11 +39,11 @@
 |---------|------|------|
 | `dialect` | `dimension`/`fact`/`metric` 선택 필드 | 방언 태그 문자열 |
 | `unresolved_expression` | 위 멤버의 `unresolved` | `dialect`+원본 식+`warning` |
-| `hierarchy` | `cube.hierarchies[]` | `levels` ≥ 2 (거친→세밀) |
+| `hierarchy` | `cube.hierarchies[]` | `name` + `levels`(≥2, unique, 거친→세밀); optional `description` |
 | `role_playing` | `cube.role_playing[]` | `base_dimension`+`role` |
-| (stub) `viewJoin.snowflake_path` | 조인 중간 논리 테이블 name[] | **Phase 2 본구현 금지** — 필드·메모만 |
+| `snowflake_path` | `viewJoin.snowflake_path` → `#/$defs/snowflake_path` | 중간 논리 테이블 name[] (`minItems` 1, `uniqueItems`). **속성 생략** = 직접 조인; **빈 배열 invalid** |
 
-hierarchy/role_playing 최소 shape가 후속 스포크 AC와 어긋나면 티켓에서 옵션을 갱신한다(추정 대규모 rename 금지).
+Phase 2에서 stub을 본구현으로 승격했다(additive: 기존 직접 조인 fixture는 `snowflake_path` 생략 유지). hierarchy/role_playing shape가 후속 스포크 AC와 어긋나면 티켓에서 옵션을 갱신한다(추정 대규모 rename 금지).
 
 ## Commands
 

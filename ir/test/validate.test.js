@@ -79,9 +79,74 @@ test("schema $defs include §3 extension identifiers", async () => {
     "unresolved_expression",
     "hierarchy",
     "role_playing",
+    "snowflake_path",
   ]) {
     assert.ok(schema.$defs?.[key], `missing $defs.${key}`);
   }
+});
+
+test("Phase 2 snowflake_path and hierarchy fixtures cover schema contracts", async () => {
+  const schema = await loadJson(schemaPath);
+  const pathDef = schema.$defs?.snowflake_path;
+  assert.equal(pathDef?.type, "array");
+  assert.equal(pathDef?.minItems, 1);
+  assert.equal(pathDef?.uniqueItems, true);
+  assert.equal(
+    schema.$defs?.viewJoin?.properties?.snowflake_path?.$ref,
+    "#/$defs/snowflake_path",
+  );
+
+  const hierarchyDef = schema.$defs?.hierarchy;
+  assert.equal(hierarchyDef?.properties?.levels?.minItems, 2);
+  assert.equal(hierarchyDef?.properties?.levels?.uniqueItems, true);
+  assert.ok(
+    hierarchyDef?.properties?.description,
+    "hierarchy.description should be optional additive field",
+  );
+
+  const validDocs = await Promise.all(
+    (await listJson(validDir)).map(async (file) => ({
+      file: path.basename(file),
+      doc: await loadJson(file),
+    })),
+  );
+
+  const snowflakeJoin = validDocs
+    .filter(({ doc }) => doc.kind === "view")
+    .flatMap(({ doc, file }) =>
+      (doc.joins ?? []).map((join) => ({ file, join })),
+    )
+    .find(({ join }) => Array.isArray(join.snowflake_path));
+  assert.ok(snowflakeJoin, "expected ≥1 valid view join with snowflake_path");
+  assert.ok(
+    snowflakeJoin.join.snowflake_path.length >= 1,
+    `${snowflakeJoin.file}: snowflake_path minItems 1`,
+  );
+
+  const hierarchyCube = validDocs.find(
+    ({ doc }) =>
+      doc.kind === "cube" &&
+      Array.isArray(doc.hierarchies) &&
+      doc.hierarchies.some(
+        (h) => Array.isArray(h.levels) && h.levels.length >= 3,
+      ),
+  );
+  assert.ok(
+    hierarchyCube,
+    "expected ≥1 valid cube hierarchy with ≥3 levels",
+  );
+
+  const invalidNames = (await listJson(invalidDir)).map((f) =>
+    path.basename(f),
+  );
+  assert.ok(
+    invalidNames.includes("snowflake-empty-path.json"),
+    "expected invalid snowflake-empty-path.json",
+  );
+  assert.ok(
+    invalidNames.includes("hierarchy-dup-levels.json"),
+    "expected invalid hierarchy-dup-levels.json",
+  );
 });
 
 test("Phase 1 basic-element fixtures cover pk/fk, inner|left+relationship, sum|count|avg", async () => {

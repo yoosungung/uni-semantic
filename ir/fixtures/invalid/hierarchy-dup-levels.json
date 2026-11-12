@@ -1,0 +1,35 @@
+{
+  "kind": "cube",
+  "name": "bad_h_dup",
+  "target": "dw",
+  "view": "orders_customer",
+  "description": "hierarchy levels must be unique",
+  "dimensions": [
+    {
+      "name": "order_year",
+      "description": "year",
+      "type": "date",
+      "column": "order_date",
+      "encryption": false,
+      "role": "all"
+    },
+    {
+      "name": "order_date",
+      "description": "date",
+      "type": "date",
+      "column": "order_date",
+      "encryption": false,
+      "role": "all"
+    }
+  ],
+  "facts": [],
+  "hierarchies": [
+    {
+      "name": "dup",
+      "levels": [
+        "order_year",
+        "order_year"
+      ]
+    }
+  ]
+}

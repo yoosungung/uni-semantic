@@ -1,0 +1,54 @@
+{
+  "kind": "cube",
+  "name": "sales_geo",
+  "target": "dw",
+  "view": "orders_region_snowflake",
+  "description": "Hierarchy 3-level(geo) 표현 예시.",
+  "dimensions": [
+    {
+      "name": "country",
+      "description": "국가.",
+      "type": "string",
+      "column": "region_code",
+      "encryption": false,
+      "role": "all"
+    },
+    {
+      "name": "region",
+      "description": "지역.",
+      "type": "string",
+      "column": "region_code",
+      "encryption": false,
+      "role": "all"
+    },
+    {
+      "name": "city",
+      "description": "도시.",
+      "type": "string",
+      "column": "region_code",
+      "encryption": false,
+      "role": "all"
+    }
+  ],
+  "facts": [
+    {
+      "name": "sale_amount",
+      "description": "판매 금액.",
+      "type": "amount",
+      "column": "sale_amount",
+      "encryption": false,
+      "role": "all"
+    }
+  ],
+  "hierarchies": [
+    {
+      "name": "geo",
+      "description": "국가→지역→도시.",
+      "levels": [
+        "country",
+        "region",
+        "city"
+      ]
+    }
+  ]
+}
