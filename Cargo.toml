@@ -5,6 +5,7 @@ members = [
   "frontends/powerbi",
   "frontends/looker",
   "frontends/tableau",
+  "frontends/bi_matrix",
   "backends/powerbi",
   "backends/looker",
   "parity",
@@ -24,5 +25,6 @@ uni_semantic_ir = { path = "ir/rust" }
 frontend_powerbi = { path = "frontends/powerbi" }
 frontend_looker = { path = "frontends/looker" }
 frontend_tableau = { path = "frontends/tableau" }
+frontend_bi_matrix = { path = "frontends/bi_matrix" }
 backend_powerbi = { path = "backends/powerbi" }
 backend_looker = { path = "backends/looker" }
