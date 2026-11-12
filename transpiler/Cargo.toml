@@ -1,0 +1,14 @@
+[package]
+name = "dialect_transpiler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Phase 3 Dialect Transpiler — classify DAX/LookML/LOD/MSTR into common vs dialect-specific"
+
+[dependencies]
+thiserror = { workspace = true }
+
+[dev-dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }

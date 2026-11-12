@@ -1,0 +1,115 @@
+[
+  {
+    "dialect": "dax",
+    "expression": "SUM(orders[sale_amount])",
+    "expect": "intersection",
+    "aggregation": "sum"
+  },
+  {
+    "dialect": "dax",
+    "expression": "COUNT(orders[order_id])",
+    "expect": "intersection",
+    "aggregation": "count"
+  },
+  {
+    "dialect": "dax",
+    "expression": "AVERAGE(orders[sale_amount])",
+    "expect": "intersection",
+    "aggregation": "avg"
+  },
+  {
+    "dialect": "dax",
+    "expression": "CALCULATE(SUM(orders[sale_amount]), ALL(orders))",
+    "expect": "difference"
+  },
+  {
+    "dialect": "lookml",
+    "expression": "type:sum",
+    "expect": "intersection",
+    "aggregation": "sum"
+  },
+  {
+    "dialect": "lookml",
+    "expression": "type:count",
+    "expect": "intersection",
+    "aggregation": "count"
+  },
+  {
+    "dialect": "lookml",
+    "expression": "type:average",
+    "expect": "intersection",
+    "aggregation": "avg"
+  },
+  {
+    "dialect": "lookml",
+    "expression": "sum(${TABLE}.sale_amount)",
+    "expect": "intersection",
+    "aggregation": "sum"
+  },
+  {
+    "dialect": "lookml",
+    "expression": "type:number",
+    "expect": "difference"
+  },
+  {
+    "dialect": "lookml",
+    "expression": "type:percentile",
+    "expect": "difference"
+  },
+  {
+    "dialect": "lod",
+    "expression": "SUM([sale_amount])",
+    "expect": "intersection",
+    "aggregation": "sum"
+  },
+  {
+    "dialect": "lod",
+    "expression": "COUNT([order_id])",
+    "expect": "intersection",
+    "aggregation": "count"
+  },
+  {
+    "dialect": "lod",
+    "expression": "AVG([sale_amount])",
+    "expect": "intersection",
+    "aggregation": "avg"
+  },
+  {
+    "dialect": "lod",
+    "expression": "{FIXED [region]: SUM([sale_amount])}",
+    "expect": "difference"
+  },
+  {
+    "dialect": "lod",
+    "expression": "{EXCLUDE [region]: AVG([sale_amount])}",
+    "expect": "difference"
+  },
+  {
+    "dialect": "mstr",
+    "expression": "Sum(Revenue)",
+    "expect": "intersection",
+    "aggregation": "sum"
+  },
+  {
+    "dialect": "mstr",
+    "expression": "Count(Orders)",
+    "expect": "intersection",
+    "aggregation": "count"
+  },
+  {
+    "dialect": "mstr",
+    "expression": "Avg(Amount)",
+    "expect": "intersection",
+    "aggregation": "avg"
+  },
+  {
+    "dialect": "mstr",
+    "expression": "Sum(Revenue){#Region}",
+    "expect": "difference"
+  },
+  {
+    "dialect": "mstr",
+    "expression": "Sum(Revenue){~+}",
+    "expect": "difference"
+  }
+]
