@@ -205,17 +205,17 @@ fn parse_df(xml: &str) -> Result<Vec<Document>, Error> {
             attr(right, "column")
                 .ok_or_else(|| Error::Msg("join right missing @column".into()))?,
         );
-        let Some(t) = tables.get_mut(&left_table) else {
+        if !tables.contains_key(&left_table) {
             return Err(Error::Msg(format!(
                 "join references unknown left table `{left_table}`"
             )));
-        };
+        }
         if !tables.contains_key(&right_table) {
             return Err(Error::Msg(format!(
                 "join references unknown right table `{right_table}`"
             )));
         }
-        t.fk.push(ForeignKey {
+        tables.get_mut(&left_table).unwrap().fk.push(ForeignKey {
             columns: vec![left_col],
             references: FkRef {
                 table: right_table,
@@ -399,16 +399,12 @@ mod tests {
 
         let ms = metrics(&docs);
         assert_eq!(ms.len(), 3);
-        let names: Vec<_> = ms.iter().map(|m| m.name.as_str()).collect();
-        assert!(names.contains(&"Sale_Amount") || names.contains(&"sale_amount") || names.iter().any(|n| n.to_ascii_lowercase().contains("sale")));
-        let sale = ms
-            .iter()
-            .find(|m| m.aggregation == "sum")
-            .expect("sum measure");
+        assert!(ms.iter().any(|m| m.name == "Sale_Amount" && m.aggregation == "sum"));
+        assert!(ms.iter().any(|m| m.name == "Order_Count" && m.aggregation == "count"));
+        assert!(ms.iter().any(|m| m.name == "Avg_Amount" && m.aggregation == "avg"));
+        let sale = ms.iter().find(|m| m.name == "Sale_Amount").unwrap();
         assert_eq!(sale.cube, "orders");
-        assert!(sale.expression.contains("amount"));
-        assert!(ms.iter().any(|m| m.aggregation == "count"));
-        assert!(ms.iter().any(|m| m.aggregation == "avg"));
+        assert_eq!(sale.expression, "orders.amount");
     }
 
     #[test]
