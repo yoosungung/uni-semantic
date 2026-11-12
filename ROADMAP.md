@@ -41,7 +41,7 @@ factory `pm-roadmap-sync`는 `##` 아래 **`- [ ]` / `- [x]`** 만 enqueue한다
 - [x] Spotfire Information Link XML 파서.
 - [x] MicroStrategy Metadata REST → Schema JSON 추출.
 - [x] Dialect Transpiler: DAX / LookML expression / Tableau LOD / MSTR 식의 교·차집합 분류.
-- [ ] 공통 집계는 자동 컴파일; 불가 식은 Unresolved Expression 격리·경고 리포트.
+- [x] 공통 집계는 자동 컴파일; 불가 식은 Unresolved Expression 격리·경고 리포트.
 
 ## Phase 4 — 에코시스템 · MCP · `slg` 배포
 

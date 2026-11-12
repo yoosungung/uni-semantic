@@ -1,0 +1,75 @@
+[
+  {
+    "dialect": "dax",
+    "expression": "SUM(orders[sale_amount])",
+    "expect": "compiled",
+    "aggregation": "sum",
+    "ir_expression": "sum(sale_amount)"
+  },
+  {
+    "dialect": "dax",
+    "expression": "COUNT(orders[order_id])",
+    "expect": "compiled",
+    "aggregation": "count",
+    "ir_expression": "count(order_id)"
+  },
+  {
+    "dialect": "dax",
+    "expression": "AVERAGE(orders[sale_amount])",
+    "expect": "compiled",
+    "aggregation": "avg",
+    "ir_expression": "avg(sale_amount)"
+  },
+  {
+    "dialect": "dax",
+    "expression": "CALCULATE(SUM(orders[sale_amount]), ALL(orders))",
+    "expect": "unresolved",
+    "warning_contains": "dax context marker"
+  },
+  {
+    "dialect": "lookml",
+    "expression": "type:sum",
+    "expect": "compiled",
+    "aggregation": "sum",
+    "ir_expression": null
+  },
+  {
+    "dialect": "lookml",
+    "expression": "sum(${TABLE}.sale_amount)",
+    "expect": "compiled",
+    "aggregation": "sum",
+    "ir_expression": "sum(sale_amount)"
+  },
+  {
+    "dialect": "lookml",
+    "expression": "type:percentile",
+    "expect": "unresolved",
+    "warning_contains": "non-common measure type"
+  },
+  {
+    "dialect": "lod",
+    "expression": "SUM([sale_amount])",
+    "expect": "compiled",
+    "aggregation": "sum",
+    "ir_expression": "sum(sale_amount)"
+  },
+  {
+    "dialect": "lod",
+    "expression": "{FIXED [region]: SUM([sale_amount])}",
+    "expect": "unresolved",
+    "warning_contains": "FIXED/INCLUDE/EXCLUDE"
+  },
+  {
+    "dialect": "mstr",
+    "expression": "Sum(Revenue)",
+    "expect": "compiled",
+    "aggregation": "sum",
+    "ir_expression": "sum(Revenue)"
+  },
+  {
+    "dialect": "mstr",
+    "expression": "Sum(Revenue){#Region}",
+    "expect": "unresolved",
+    "warning_contains": "level / dimensionality"
+  }
+]

@@ -16,7 +16,7 @@ This file provides guidance to AI coding assistants (Claude Code, Codex, Gemini,
 | `ROADMAP.md` | 수행 계획(마일스톤·순서·미결정 항목) | 루트 |
 | `ir/DESIGN.md` | Universal Semantic IR 스키마 내부 설계 + `## Commands` | `ir/` |
 | `parity/DESIGN.md` | 변환 전후 물리 SQL Equivalence 하네스 + `## Commands` | `parity/` |
-| `transpiler/DESIGN.md` | Dialect Transpiler(교·차집합 분류) + `## Commands` | `transpiler/` |
+| `transpiler/DESIGN.md` | Dialect Transpiler(분류·컴파일·Unresolved 리포트) + `## Commands` | `transpiler/` |
 | `<comp>/DESIGN.md` | 컴포넌트 *내부* 설계 + `## Commands` (빌드/실행/테스트) | `frontends/`, `backends/`, `cli/`, `mcp/` |
  
 규칙:
@@ -38,5 +38,5 @@ This file provides guidance to AI coding assistants (Claude Code, Codex, Gemini,
  
 ## 3. Status
  
-기획 문서 + Phase 1 IR 스키마(`ir/`) + Power BI↔Looker 스포크 MVP + 물리 SQL parity 하네스(`parity/`) + Phase 2 Tableau/BI Matrix/SAP BO 스포크 + IR snowflake·Hierarchy 보강 + Phase 3 Spotfire Information Link XML · MicroStrategy Metadata Schema JSON 파서 · Dialect Transpiler(`transpiler/`). — [ARCHITECTURE.md](ARCHITECTURE.md) · [ROADMAP.md](ROADMAP.md) · [ir/DESIGN.md](ir/DESIGN.md) · [parity/DESIGN.md](parity/DESIGN.md) · [transpiler/DESIGN.md](transpiler/DESIGN.md) · [frontends/tableau/DESIGN.md](frontends/tableau/DESIGN.md) · [frontends/bi_matrix/DESIGN.md](frontends/bi_matrix/DESIGN.md) · [frontends/sap_bo/DESIGN.md](frontends/sap_bo/DESIGN.md) · [frontends/spotfire/DESIGN.md](frontends/spotfire/DESIGN.md) · [frontends/mstr/DESIGN.md](frontends/mstr/DESIGN.md).
+기획 문서 + Phase 1 IR 스키마(`ir/`) + Power BI↔Looker 스포크 MVP + 물리 SQL parity 하네스(`parity/`) + Phase 2 Tableau/BI Matrix/SAP BO 스포크 + IR snowflake·Hierarchy 보강 + Phase 3 Spotfire/MSTR 스포크 · Dialect Transpiler(`transpiler/` 분류·공통 집계 컴파일·Unresolved 경고 리포트). — [ARCHITECTURE.md](ARCHITECTURE.md) · [ROADMAP.md](ROADMAP.md) · [ir/DESIGN.md](ir/DESIGN.md) · [parity/DESIGN.md](parity/DESIGN.md) · [transpiler/DESIGN.md](transpiler/DESIGN.md) · [frontends/tableau/DESIGN.md](frontends/tableau/DESIGN.md) · [frontends/bi_matrix/DESIGN.md](frontends/bi_matrix/DESIGN.md) · [frontends/sap_bo/DESIGN.md](frontends/sap_bo/DESIGN.md) · [frontends/spotfire/DESIGN.md](frontends/spotfire/DESIGN.md) · [frontends/mstr/DESIGN.md](frontends/mstr/DESIGN.md).
 

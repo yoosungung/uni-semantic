@@ -1,6 +1,6 @@
-//! Dialect Transpiler — classify dialect expressions into common vs dialect-specific.
+//! Dialect Transpiler — classify, auto-compile common aggs, isolate Unresolved.
 //!
-//! PoC: classifier only (ARCHITECTURE §1.4–1.5 · §4). Emit / Unresolved isolation = later tickets.
+//! ARCHITECTURE §1.4–1.5 · §4. IR `$defs/unresolved_expression` shape (no schema expand).
 
 use thiserror::Error;
 
@@ -10,6 +10,17 @@ pub enum Dialect {
     Lookml,
     Lod,
     Mstr,
+}
+
+impl Dialect {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Dialect::Dax => "dax",
+            Dialect::Lookml => "lookml",
+            Dialect::Lod => "lod",
+            Dialect::Mstr => "mstr",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,10 +42,39 @@ impl CommonAgg {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Classification {
-    /// 교집합 — ARCHITECTURE §1.4 공통 표준 집계 (자동 컴파일 후보).
+    /// 교집합 — ARCHITECTURE §1.4 공통 표준 집계 (자동 컴파일 대상).
     Intersection { aggregation: CommonAgg },
-    /// 차집합 — 방언 고유 (Unresolved 후보; 격리는 후속 티켓).
+    /// 차집합 — 방언 고유 → Unresolved 격리.
     Difference { reason: String },
+}
+
+/// IR-canonical compiled measure (ARCHITECTURE §1.4).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CompiledExpression {
+    pub aggregation: CommonAgg,
+    /// `sum(col)` / `count(col)` / `avg(col)` when operand extractable; LookML `type:*` → `None`.
+    pub ir_expression: Option<String>,
+}
+
+/// IR `$defs/unresolved_expression` — dialect + expression + warning (ARCHITECTURE §1.5).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct UnresolvedExpression {
+    pub dialect: String,
+    pub expression: String,
+    pub warning: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CompileResult {
+    Compiled(CompiledExpression),
+    Unresolved(UnresolvedExpression),
+}
+
+/// Warning report collecting Unresolved isolations from a batch compile.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct WarningReport {
+    pub unresolved: Vec<UnresolvedExpression>,
+    pub compiled_count: usize,
 }
 
 #[derive(Debug, Error, PartialEq, Eq)]
@@ -55,6 +95,124 @@ pub fn classify(dialect: Dialect, expression: &str) -> Result<Classification, Er
         Dialect::Lookml => Ok(classify_lookml(&expr)),
         Dialect::Lod => Ok(classify_lod(&expr)),
         Dialect::Mstr => Ok(classify_mstr(&expr)),
+    }
+}
+
+/// Classify then auto-compile intersection, or isolate difference as Unresolved.
+pub fn compile(dialect: Dialect, expression: &str) -> Result<CompileResult, Error> {
+    let expr = collapse_ws(expression);
+    if expr.is_empty() {
+        return Err(Error::EmptyExpression);
+    }
+
+    match classify(dialect, &expr)? {
+        Classification::Intersection { aggregation } => Ok(CompileResult::Compiled(
+            CompiledExpression {
+                aggregation,
+                ir_expression: try_ir_expression(dialect, &expr, aggregation),
+            },
+        )),
+        Classification::Difference { reason } => Ok(CompileResult::Unresolved(
+            UnresolvedExpression {
+                dialect: dialect.as_str().to_string(),
+                expression: expr,
+                warning: format!("unresolved: {reason}"),
+            },
+        )),
+    }
+}
+
+/// Batch compile; Unresolved items accumulate into `WarningReport`.
+pub fn compile_all(
+    inputs: &[(Dialect, &str)],
+) -> Result<(Vec<CompileResult>, WarningReport), Error> {
+    let mut results = Vec::with_capacity(inputs.len());
+    let mut report = WarningReport::default();
+    for &(dialect, expression) in inputs {
+        let outcome = compile(dialect, expression)?;
+        match &outcome {
+            CompileResult::Compiled(_) => report.compiled_count += 1,
+            CompileResult::Unresolved(u) => report.unresolved.push(u.clone()),
+        }
+        results.push(outcome);
+    }
+    Ok((results, report))
+}
+
+/// Build IR-canonical `agg(operand)` when the dialect expression yields an operand.
+fn try_ir_expression(dialect: Dialect, expr: &str, aggregation: CommonAgg) -> Option<String> {
+    let operand = extract_operand(dialect, expr)?;
+    if operand.is_empty() {
+        return None;
+    }
+    Some(format!("{}({})", aggregation.as_str(), operand))
+}
+
+fn extract_operand(dialect: Dialect, expr: &str) -> Option<String> {
+    match dialect {
+        Dialect::Lookml => {
+            let lower = expr.to_ascii_lowercase();
+            if lower.starts_with("type:") {
+                return None;
+            }
+            let (_, inner) = split_call(expr)?;
+            Some(strip_lookml_table_ref(inner))
+        }
+        Dialect::Dax => {
+            let (_, inner) = split_call(expr)?;
+            dax_column_name(inner)
+        }
+        Dialect::Lod => {
+            let (_, inner) = split_call(expr)?;
+            tableau_field_name(inner)
+        }
+        Dialect::Mstr => {
+            let (_, inner) = split_call(expr)?;
+            let name = inner.trim();
+            if name.is_empty() {
+                None
+            } else {
+                Some(name.to_string())
+            }
+        }
+    }
+}
+
+fn strip_lookml_table_ref(inner: &str) -> String {
+    let s = inner.trim();
+    // ${TABLE}.col / ${view_name}.col → col
+    if let Some(rest) = s.strip_prefix("${") {
+        if let Some(dot) = rest.find("}.") {
+            return rest[dot + 2..].trim().to_string();
+        }
+    }
+    s.to_string()
+}
+
+fn dax_column_name(inner: &str) -> Option<String> {
+    let (_, col_part) = inner.split_once('[')?;
+    if !col_part.ends_with(']') {
+        return None;
+    }
+    let col = &col_part[..col_part.len() - 1];
+    let col = col.trim();
+    if col.is_empty() {
+        None
+    } else {
+        Some(col.to_string())
+    }
+}
+
+fn tableau_field_name(inner: &str) -> Option<String> {
+    let s = inner.trim();
+    if !(s.starts_with('[') && s.ends_with(']')) {
+        return None;
+    }
+    let name = s[1..s.len() - 1].trim();
+    if name.is_empty() {
+        None
+    } else {
+        Some(name.to_string())
     }
 }
 
