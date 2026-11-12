@@ -41,7 +41,7 @@ BI Matrix (Excel)   ──┘   │ (table, view, cube, metric…)  │
 | `ir/`               | Universal Semantic IR JSON Schema 정본·예시 (코드 도입 시) |
 | `frontends/<tool>/` | 소스 메타 → IR 파서/추출기                                 |
 | `backends/<tool>/`  | IR → 타깃 포맷 생성기                                    |
-| `transpiler/`       | 방언 수식 교·차집합 분류 (Dialect Transpiler; Phase 3)   |
+| `transpiler/`       | 방언 수식 분류·공통 집계 컴파일·Unresolved 경고 리포트 (Phase 3) |
 | `cli/`              | `slg` (Semantic Layer Generator) 바이너리             |
 | `mcp/`              | IR 조회·NL2SQL 연동 MCP 표면 (후기 Phase)                 |
 
