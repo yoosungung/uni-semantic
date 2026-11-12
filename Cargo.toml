@@ -4,6 +4,7 @@ members = [
   "ir/rust",
   "frontends/powerbi",
   "frontends/looker",
+  "frontends/tableau",
   "backends/powerbi",
   "backends/looker",
   "parity",
@@ -22,5 +23,6 @@ thiserror = "2"
 uni_semantic_ir = { path = "ir/rust" }
 frontend_powerbi = { path = "frontends/powerbi" }
 frontend_looker = { path = "frontends/looker" }
+frontend_tableau = { path = "frontends/tableau" }
 backend_powerbi = { path = "backends/powerbi" }
 backend_looker = { path = "backends/looker" }

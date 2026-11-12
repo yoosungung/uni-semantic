@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- uni-semantic PoC fixture: classic relation join tree (not Object Model). -->
+<datasource formatted-name='sqlserver.orders_customer' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <connection class='sqlserver' dbname='dw' server='localhost'>
+    <relation join='left' type='join'>
+      <clause type='join'>
+        <expression op='='>
+          <expression op='[orders].[customer_id]' />
+          <expression op='[customer].[customer_id]' />
+        </expression>
+      </clause>
+      <relation name='orders' table='[sales].[orders]' type='table'>
+        <columns>
+          <column datatype='integer' name='order_id' />
+          <column datatype='integer' name='customer_id' />
+          <column datatype='real' name='sale_amount' />
+        </columns>
+      </relation>
+      <relation name='customer' table='[sales].[customer]' type='table'>
+        <columns>
+          <column datatype='integer' name='customer_id' />
+          <column datatype='string' name='region_code' />
+        </columns>
+      </relation>
+    </relation>
+  </connection>
+</datasource>
