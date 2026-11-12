@@ -39,7 +39,7 @@ factory `pm-roadmap-sync`는 `##` 아래 **`- [ ]` / `- [x]`** 만 enqueue한다
 의존: Phase 2 스포크·IR 확장.
 
 - [x] Spotfire Information Link XML 파서.
-- [ ] MicroStrategy Metadata REST → Schema JSON 추출.
+- [x] MicroStrategy Metadata REST → Schema JSON 추출.
 - [ ] Dialect Transpiler: DAX / LookML expression / Tableau LOD / MSTR 식의 교·차집합 분류.
 - [ ] 공통 집계는 자동 컴파일; 불가 식은 Unresolved Expression 격리·경고 리포트.
 
