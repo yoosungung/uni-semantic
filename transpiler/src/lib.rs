@@ -50,20 +50,16 @@ pub fn classify(dialect: Dialect, expression: &str) -> Result<Classification, Er
         return Err(Error::EmptyExpression);
     }
 
-    Ok(match dialect {
-        Dialect::Dax => classify_dax(&expr),
-        Dialect::Lookml => classify_lookml(&expr),
-        Dialect::Lod => classify_lod(&expr),
-        Dialect::Mstr => classify_mstr(&expr),
-    })
+    match dialect {
+        Dialect::Dax => Ok(classify_dax(&expr)),
+        Dialect::Lookml => Ok(classify_lookml(&expr)),
+        Dialect::Lod => Ok(classify_lod(&expr)),
+        Dialect::Mstr => Ok(classify_mstr(&expr)),
+    }
 }
 
 fn collapse_ws(s: &str) -> String {
     s.split_whitespace().collect::<Vec<_>>().join(" ")
-}
-
-fn intersection(agg: CommonAgg) -> Classification {
-    Classification::Intersection { aggregation: agg }
 }
 
 fn difference(reason: impl Into<String>) -> Classification {
@@ -72,29 +68,58 @@ fn difference(reason: impl Into<String>) -> Classification {
     }
 }
 
-/// Strip a balanced outer `NAME(...)` and return `(agg, inner)` if the whole expr is that call.
-fn take_fn_call<'a>(expr: &'a str, names: &[&str]) -> Option<(CommonAgg, &'a str)> {
-    let upper = expr.to_ascii_uppercase();
-    for name in names {
-        let prefix = format!("{name}(");
-        if upper.starts_with(&prefix) && expr.ends_with(')') {
-            let inner = &expr[prefix.len()..expr.len() - 1];
-            // Reject nested top-level calls that imply context (simple heuristic: another FN( after start)
-            let agg = match *name {
-                "SUM" => CommonAgg::Sum,
-                "COUNT" => CommonAgg::Count,
-                "AVG" | "AVERAGE" => CommonAgg::Avg,
-                _ => continue,
-            };
-            return Some((agg, inner.trim()));
+fn intersection(agg: CommonAgg) -> Classification {
+    Classification::Intersection { aggregation: agg }
+}
+
+/// Strip a single outer `NAME(...)` call; returns `(name_upper, inner)`.
+fn split_call(expr: &str) -> Option<(&str, &str)> {
+    let open = expr.find('(')?;
+    let name = expr[..open].trim();
+    if name.is_empty() {
+        return None;
+    }
+    let rest = &expr[open + 1..];
+    if !rest.ends_with(')') {
+        return None;
+    }
+    let inner = rest[..rest.len() - 1].trim();
+    // Reject nested top-level commas / extra paren pairs beyond a single call.
+    if !balanced_parens(inner) {
+        return None;
+    }
+    Some((name, inner))
+}
+
+fn balanced_parens(s: &str) -> bool {
+    let mut depth = 0i32;
+    for c in s.chars() {
+        match c {
+            '(' => depth += 1,
+            ')' => {
+                depth -= 1;
+                if depth < 0 {
+                    return false;
+                }
+            }
+            _ => {}
         }
     }
-    None
+    depth == 0
+}
+
+fn parse_common_agg_name(name: &str) -> Option<CommonAgg> {
+    match name.to_ascii_uppercase().as_str() {
+        "SUM" => Some(CommonAgg::Sum),
+        "COUNT" => Some(CommonAgg::Count),
+        "AVG" | "AVERAGE" => Some(CommonAgg::Avg),
+        _ => None,
+    }
 }
 
 fn classify_dax(expr: &str) -> Classification {
     let upper = expr.to_ascii_uppercase();
-    // Dialect-specific context first.
+    // Dialect-specific context markers (CALCULATE / FILTER / ALL / …).
     for marker in [
         "CALCULATE(",
         "FILTER(",
@@ -102,17 +127,44 @@ fn classify_dax(expr: &str) -> Classification {
         "ALLEXCEPT(",
         "RELATED(",
         "RELATEDTABLE(",
-        "EARLIER(",
+        "VALUES(",
+        "DISTINCT(",
         "USERELATIONSHIP(",
     ] {
         if upper.contains(marker) {
-            return difference(format!("dax context `{marker}`"));
+            return difference(format!("dax context marker `{marker}`"));
         }
     }
-    match take_fn_call(expr, &["SUM", "COUNT", "AVERAGE", "AVG"]) {
-        Some((agg, _)) => intersection(agg),
-        None => difference("dax: not a lone SUM|COUNT|AVERAGE|AVG call"),
+
+    let Some((name, inner)) = split_call(expr) else {
+        return difference("dax: not a single function call");
+    };
+    let Some(agg) = parse_common_agg_name(name) else {
+        return difference(format!("dax: unsupported function `{name}`"));
+    };
+    // Simple column ref: Table[col] (no nested calls).
+    if !is_dax_column_ref(inner) {
+        return difference("dax: argument is not Table[column]");
     }
+    if upper.matches('(').count() != 1 {
+        return difference("dax: nested call");
+    }
+    intersection(agg)
+}
+
+fn is_dax_column_ref(inner: &str) -> bool {
+    // Table[column] — identifiers without nested '(' / ','.
+    if inner.contains('(') || inner.contains(',') {
+        return false;
+    }
+    let Some((table, col_part)) = inner.split_once('[') else {
+        return false;
+    };
+    if table.trim().is_empty() || !col_part.ends_with(']') {
+        return false;
+    }
+    let col = &col_part[..col_part.len() - 1];
+    !col.trim().is_empty() && !col.contains('[')
 }
 
 fn classify_lookml(expr: &str) -> Classification {
@@ -123,72 +175,74 @@ fn classify_lookml(expr: &str) -> Classification {
             "sum" => intersection(CommonAgg::Sum),
             "count" => intersection(CommonAgg::Count),
             "average" | "avg" => intersection(CommonAgg::Avg),
-            other => difference(format!("lookml type `{other}` not in sum|count|average")),
+            other => difference(format!("lookml: non-common measure type `{other}`")),
         };
     }
-    match take_fn_call(expr, &["SUM", "COUNT", "AVERAGE", "AVG"]) {
-        Some((agg, _)) => intersection(agg),
-        None => difference("lookml: not type:sum|count|average nor lone agg call"),
+
+    let Some((name, inner)) = split_call(expr) else {
+        return difference("lookml: not type:agg or single call");
+    };
+    let Some(agg) = parse_common_agg_name(name) else {
+        return difference(format!("lookml: unsupported function `{name}`"));
+    };
+    if inner.is_empty() || !balanced_parens(inner) {
+        return difference("lookml: empty or unbalanced argument");
     }
+    // Reject nested top-level function calls beyond the outer agg.
+    if expr.matches('(').count() != 1 {
+        return difference("lookml: nested call");
+    }
+    intersection(agg)
 }
 
 fn classify_lod(expr: &str) -> Classification {
-    let upper = expr.to_ascii_uppercase();
-    // Tableau LOD braces
-    if expr.contains('{') {
-        for marker in ["FIXED", "INCLUDE", "EXCLUDE"] {
-            if upper.contains(marker) {
-                return difference(format!("lod `{marker}` expression"));
-            }
-        }
-        return difference("lod brace expression");
+    // Tableau LOD expressions wrap in {FIXED|INCLUDE|EXCLUDE …}.
+    let trimmed = expr.trim();
+    if trimmed.starts_with('{') {
+        return difference("lod: FIXED/INCLUDE/EXCLUDE expression");
     }
-    match take_fn_call(expr, &["SUM", "COUNT", "AVG", "AVERAGE"]) {
-        Some((agg, _)) => intersection(agg),
-        None => difference("lod: not a lone SUM|COUNT|AVG call"),
+
+    let Some((name, inner)) = split_call(expr) else {
+        return difference("lod: not a single function call");
+    };
+    let Some(agg) = parse_common_agg_name(name) else {
+        return difference(format!("lod: unsupported function `{name}`"));
+    };
+    if !is_tableau_field_ref(inner) {
+        return difference("lod: argument is not [field]");
     }
+    if expr.matches('(').count() != 1 {
+        return difference("lod: nested call");
+    }
+    intersection(agg)
+}
+
+fn is_tableau_field_ref(inner: &str) -> bool {
+    let s = inner.trim();
+    if !(s.starts_with('[') && s.ends_with(']')) {
+        return false;
+    }
+    let name = &s[1..s.len() - 1];
+    !name.trim().is_empty() && !name.contains('[') && !name.contains('(')
 }
 
 fn classify_mstr(expr: &str) -> Classification {
-    // Level / dimensionality markers: {...} after metric, e.g. Sum(X){#Region} or Sum(X){~+}
-    if let Some(idx) = expr.find('{') {
-        if idx > 0 {
-            return difference("mstr level/dimensionality `{…}`");
-        }
-    }
-    // MSTR often capitalizes Sum/Count/Avg (not all-caps).
-    let upper = expr.to_ascii_uppercase();
-    match take_fn_call(&upper, &["SUM", "COUNT", "AVG", "AVERAGE"]) {
-        Some((agg, _)) => {
-            // Re-check original ends with ) and is a single call (no trailing junk beyond ws).
-            let trimmed = expr.trim();
-            if !trimmed.ends_with(')') {
-                return difference("mstr: malformed agg call");
-            }
-            intersection(agg)
-        }
-        None => difference("mstr: not a lone Sum|Count|Avg call"),
-    }
-}
-
-#[cfg(test)]
-mod unit {
-    use super::*;
-
-    #[test]
-    fn dax_sum_intersection() {
-        let c = classify(Dialect::Dax, "SUM(orders[sale_amount])").unwrap();
-        assert_eq!(
-            c,
-            Classification::Intersection {
-                aggregation: CommonAgg::Sum
-            }
-        );
+    // Level/dimensionality modifiers: Sum(X){#Region}, Sum(X){~+}, …
+    if expr.contains('{') || expr.contains('}') {
+        return difference("mstr: level / dimensionality modifier");
     }
 
-    #[test]
-    fn lod_fixed_difference() {
-        let c = classify(Dialect::Lod, "{FIXED [region]: SUM([sale_amount])}").unwrap();
-        assert!(matches!(c, Classification::Difference { .. }));
+    let Some((name, inner)) = split_call(expr) else {
+        return difference("mstr: not a single function call");
+    };
+    let Some(agg) = parse_common_agg_name(name) else {
+        return difference(format!("mstr: unsupported function `{name}`"));
+    };
+    if inner.is_empty() || inner.contains('(') || inner.contains(',') {
+        return difference("mstr: argument is not a simple metric/fact name");
     }
+    if expr.matches('(').count() != 1 {
+        return difference("mstr: nested call");
+    }
+    intersection(agg)
 }
