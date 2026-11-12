@@ -1,0 +1,43 @@
+{
+  "kind": "view",
+  "name": "bad_snowflake",
+  "target": "dw",
+  "combine": "join",
+  "description": "snowflake_path empty array is invalid (omit property for direct join).",
+  "sources": [
+    {
+      "kind": "table",
+      "table": "orders"
+    },
+    {
+      "kind": "table",
+      "table": "region"
+    }
+  ],
+  "joins": [
+    {
+      "left": "orders",
+      "right": "region",
+      "type": "inner",
+      "relationship": "many_to_one",
+      "snowflake_path": [],
+      "on": [
+        {
+          "left_column": "region_code",
+          "right_column": "region_code"
+        }
+      ]
+    }
+  ],
+  "columns": [
+    {
+      "name": "order_id",
+      "mappings": [
+        {
+          "source": "orders",
+          "column": "order_id"
+        }
+      ]
+    }
+  ]
+}

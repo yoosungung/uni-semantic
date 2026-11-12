@@ -1,0 +1,62 @@
+{
+  "kind": "view",
+  "name": "orders_region_snowflake",
+  "target": "dw",
+  "combine": "join",
+  "description": "orders→customer→region snowflake 복합 조인 예시.",
+  "sources": [
+    {
+      "kind": "table",
+      "table": "orders"
+    },
+    {
+      "kind": "table",
+      "table": "customer"
+    },
+    {
+      "kind": "table",
+      "table": "region"
+    }
+  ],
+  "joins": [
+    {
+      "left": "orders",
+      "right": "region",
+      "type": "inner",
+      "relationship": "many_to_one",
+      "snowflake_path": [
+        "customer"
+      ],
+      "on": [
+        {
+          "left_column": "region_code",
+          "right_column": "region_code"
+        }
+      ]
+    }
+  ],
+  "columns": [
+    {
+      "name": "order_id",
+      "mappings": [
+        {
+          "source": "orders",
+          "column": "order_id"
+        }
+      ]
+    },
+    {
+      "name": "region_code",
+      "mappings": [
+        {
+          "source": "orders",
+          "column": "region_code"
+        },
+        {
+          "source": "region",
+          "column": "region_code"
+        }
+      ]
+    }
+  ]
+}

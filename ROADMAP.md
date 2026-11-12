@@ -32,7 +32,7 @@ factory `pm-roadmap-sync`는 `##` 아래 **`- [ ]` / `- [x]`** 만 enqueue한다
 - [x] Tableau `.tds` (XML) 파서 · 조인 트리 추출.
 - [x] BI Matrix `.xlsx` 정의서 템플릿 파싱 → IR 매핑.
 - [x] SAP BO `.unx` PoC: Data Foundation · Business Layer 추출.
-- [ ] IR 보강: snowflake형 복합 조인 · Hierarchy 표현.
+- [x] IR 보강: snowflake형 복합 조인 · Hierarchy 표현.
 
 ## Phase 3 — 리포지토리 연동 · 수식 방언
 

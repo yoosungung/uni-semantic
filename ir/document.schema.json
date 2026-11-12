@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://uni-semantic.local/ir/document.schema.json",
   "title": "Universal Semantic IR document",
-  "description": "Universal Semantic IR 문서 한 건(kind로 구분). 출발 복사본: sql-mcp semantic/schema/document.schema.json ($id https://sql-mcp.local/semantic/document.schema.json). 런타임은 sql-mcp 패키지/경로를 참조하지 않는다. ARCHITECTURE §3 확장: dialect, unresolved_expression, hierarchy, role_playing.",
+  "description": "Universal Semantic IR 문서 한 건(kind로 구분). 출발 복사본: sql-mcp semantic/schema/document.schema.json ($id https://sql-mcp.local/semantic/document.schema.json). 런타임은 sql-mcp 패키지/경로를 참조하지 않는다. ARCHITECTURE §3 확장: dialect, unresolved_expression, hierarchy, role_playing, snowflake_path.",
   "oneOf": [
     {
       "$ref": "#/$defs/table"
@@ -498,11 +498,7 @@
           }
         },
         "snowflake_path": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/name"
-          },
-          "description": "Phase 2 stub. snowflake형 중간 논리 테이블 name 경로. 생략/빈 배열 = 직접 조인. 본구현은 Phase 2."
+          "$ref": "#/$defs/snowflake_path"
         }
       }
     },
@@ -1013,9 +1009,19 @@
         }
       }
     },
+    "snowflake_path": {
+      "title": "Snowflake path",
+      "description": "snowflake형 복합 조인의 중간 논리 테이블 name 경로(left → …path… → right). 속성 생략 = 직접 조인. 빈 배열 금지(minItems 1).",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/name"
+      }
+    },
     "hierarchy": {
       "title": "Hierarchy",
-      "description": "큐브 차원 계층. levels는 거친→세밀 순 dimension name. Phase 2에서 표현 보강 가능.",
+      "description": "큐브 차원 계층. levels는 거친→세밀 순 dimension name(≥2, unique).",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1025,6 +1031,10 @@
       "properties": {
         "name": {
           "$ref": "#/$defs/name"
+        },
+        "description": {
+          "type": "string",
+          "description": "계층 설명(선택)."
         },
         "levels": {
           "type": "array",
