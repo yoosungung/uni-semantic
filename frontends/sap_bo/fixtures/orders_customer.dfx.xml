@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataFoundation name="orders_df">
+  <tables>
+    <table name="orders" schema="sales" db="dw">
+      <column name="order_id" dataType="numeric" nullable="false" key="true"/>
+      <column name="customer_id" dataType="numeric" nullable="false"/>
+      <column name="amount" dataType="numeric" nullable="true"/>
+    </table>
+    <table name="customer" schema="sales" db="dw">
+      <column name="customer_id" dataType="numeric" nullable="false" key="true"/>
+      <column name="name" dataType="varchar" nullable="true"/>
+    </table>
+  </tables>
+  <joins>
+    <join type="left">
+      <left table="orders" column="customer_id"/>
+      <right table="customer" column="customer_id"/>
+    </join>
+  </joins>
+</dataFoundation>
