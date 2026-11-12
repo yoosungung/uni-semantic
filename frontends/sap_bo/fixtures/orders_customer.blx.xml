@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<businessLayer name="orders_bl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:business="http://www.sap.com/bobj/business">
+  <root>
+    <businessItems xsi:type="business:Folder" businessName="Orders">
+      <businessItems xsi:type="business:Dimension" businessName="Order Id" bindingTable="orders" bindingColumn="order_id"/>
+      <businessItems xsi:type="business:Measure" businessName="Sale Amount" aggregation="SUM" bindingTable="orders" bindingColumn="amount"/>
+      <businessItems xsi:type="business:Measure" businessName="Order Count" aggregation="COUNT" bindingTable="orders" bindingColumn="order_id"/>
+      <businessItems xsi:type="business:Measure" businessName="Avg Amount" aggregation="AVG" bindingTable="orders" bindingColumn="amount"/>
+    </businessItems>
+  </root>
+</businessLayer>
