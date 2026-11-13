@@ -27,6 +27,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "backend_cube"
+version = "0.1.0"
+dependencies = [
+ "thiserror",
+ "uni_semantic_ir",
+]
+
+[[package]]
+name = "backend_dbt"
+version = "0.1.0"
+dependencies = [
+ "thiserror",
+ "uni_semantic_ir",
+]
+
+[[package]]
 name = "backend_looker"
 version = "0.1.0"
 dependencies = [

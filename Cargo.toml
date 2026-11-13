@@ -11,6 +11,8 @@ members = [
   "frontends/mstr",
   "backends/powerbi",
   "backends/looker",
+  "backends/dbt",
+  "backends/cube",
   "parity",
   "transpiler",
   "tests/mvp_roundtrip",
@@ -35,4 +37,6 @@ frontend_spotfire = { path = "frontends/spotfire" }
 frontend_mstr = { path = "frontends/mstr" }
 backend_powerbi = { path = "backends/powerbi" }
 backend_looker = { path = "backends/looker" }
+backend_dbt = { path = "backends/dbt" }
+backend_cube = { path = "backends/cube" }
 dialect_transpiler = { path = "transpiler" }
