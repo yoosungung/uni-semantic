@@ -49,7 +49,7 @@ factory `pm-roadmap-sync`는 `##` 아래 **`- [ ]` / `- [x]`** 만 enqueue한다
 
 - [x] Emitter: dbt Semantic Layer YAML · Cube.js 데이터 모델.
 - [ ] IR 기반 MCP 연동(`sql-mcp`/NL2SQL 에이전트가 단일 스키마로 조회).
-- [ ] **`slg`** CLI 패키징 (`slg convert --from pbip --to lookml`) · Schema Diff(`slg` 하위 명령, CLI만).
+- [x] **`slg`** CLI 패키징 (`slg convert --from pbip --to lookml`) · Schema Diff(`slg` 하위 명령, CLI만).
 
 ## 미결정
 

@@ -1,0 +1,17 @@
+[package]
+name = "slg"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "slg"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+thiserror = { workspace = true }
+uni_semantic_ir = { workspace = true }
+frontend_powerbi = { workspace = true }
+frontend_looker = { workspace = true }
+backend_looker = { workspace = true }

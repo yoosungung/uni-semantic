@@ -15,6 +15,7 @@ members = [
   "backends/cube",
   "parity",
   "transpiler",
+  "cli",
   "tests/mvp_roundtrip",
 ]
 

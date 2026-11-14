@@ -6,6 +6,9 @@
 
 ```bash
 cargo test
+cargo test -p slg
+cargo run -p slg -- convert --from pbip --to lookml frontends/powerbi/fixtures/orders_customer.bim.json
+cargo run -p slg -- schema-diff frontends/powerbi/fixtures/orders_customer.bim.json frontends/looker/fixtures/orders_customer.lkml
 cargo test -p sql_parity
 cargo test -p frontend_tableau
 cargo test -p frontend_bi_matrix
