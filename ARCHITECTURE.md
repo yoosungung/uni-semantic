@@ -86,3 +86,15 @@ BI Matrix (Excel)   ──┘   │ (table, view, cube, metric…)  │
 - 스택: Rust(`clap` · `serde` 등) + IR JSON Schema. Python 스포크는 서브프로세스/사이드카로 IR만 교환.
 - Schema Diff는 **CLI만** (`slg` 하위 명령). 별도 GUI는 두지 않는다.
 - Phase 4에서 IR → dbt Semantic Layer YAML · Cube.js · `sql-mcp`/MCP emit을 둔다. MCP는 여러 BI 큐브/조인을 단일 IR 스키마로 조회하게 한다.
+
+### 5.1 sql-mcp emit 어댑터 (role_playing)
+
+sql-mcp 연구 `decision: partial` — **role_playing → reject+strip** (부모 `8709c016-1ea3-4e7b-9112-370c53dce3d6`). sql-mcp는 `$defs.role_playing` / `cube.role_playing`을 스키마에 넣지 않으며, role-play는 **별도 dimension + view join alias**(다중 FK)로만 표현한다.
+
+| 규칙 | 계약 |
+|------|------|
+| Phase 4 MVP | IR → sql-mcp emit 시 `cube.role_playing[]`를 **strip**(출력 문서에서 제거). 스키마에 필드를 추가하지 않는다. |
+| 비목표 | sql-mcp에 role_playing 스키마 추가 · emit 경로에서 hierarchy 전개(별도 Phase). |
+| 후속(선택) | strip 대신 emit **전** `role_playing`을 dimension+join alias로 전개하는 어댑터 — Phase 4 MCP 티켓 본구현이 아닌 follow-up. |
+
+허브 IR의 `role_playing`은 유지한다(§3). 타깃이 sql-mcp일 때만 어댑터가 strip한다.

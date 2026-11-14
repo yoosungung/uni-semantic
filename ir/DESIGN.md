@@ -40,7 +40,7 @@
 | `dialect` | `unresolved_expression.dialect`만 (`$ref`) | 방언 태그 문자열. 멤버 선택 필드 없음 |
 | `unresolved_expression` | 위 멤버의 `unresolved` | `dialect`+원본 식+`warning` |
 | `hierarchy` | `cube.hierarchies[]` | `name` + `levels`(≥2, unique, 거친→세밀); optional `description` |
-| `role_playing` | `cube.role_playing[]` | `base_dimension`+`role` |
+| `role_playing` | `cube.role_playing[]` | `base_dimension`+`role`. sql-mcp emit 대상에서는 **strip**(ARCHITECTURE §5.1; 부모 decision reject+strip). |
 | `snowflake_path` | `viewJoin.snowflake_path` → `#/$defs/snowflake_path` | 중간 논리 테이블 name[] (`minItems` 1, `uniqueItems`). **속성 생략** = 직접 조인; **빈 배열 invalid** |
 
 Phase 2에서 stub을 본구현으로 승격했다(additive: 기존 직접 조인 fixture는 `snowflake_path` 생략 유지). hierarchy/role_playing shape가 후속 스포크 AC와 어긋나면 티켓에서 옵션을 갱신한다(추정 대규모 rename 금지).
