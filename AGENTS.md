@@ -38,5 +38,5 @@ This file provides guidance to AI coding assistants (Claude Code, Codex, Gemini,
  
 ## 3. Status
  
-기획 문서 + Phase 1–3 완료 + Phase 4 Emitter: dbt Semantic Layer YAML(`backends/dbt`) · Cube.js YAML(`backends/cube`). MCP/`slg`는 backlog. — [ARCHITECTURE.md](ARCHITECTURE.md) · [ROADMAP.md](ROADMAP.md) · [backends/dbt/DESIGN.md](backends/dbt/DESIGN.md) · [backends/cube/DESIGN.md](backends/cube/DESIGN.md) · [ir/DESIGN.md](ir/DESIGN.md) · [parity/DESIGN.md](parity/DESIGN.md) · [transpiler/DESIGN.md](transpiler/DESIGN.md).
+기획 문서 + Phase 1–3 완료 + Phase 4 Emitter(dbt·Cube) + **`slg` CLI**(`cli/`: convert pbip→lookml · schema-diff). MCP는 backlog. — [ARCHITECTURE.md](ARCHITECTURE.md) · [ROADMAP.md](ROADMAP.md) · [cli/DESIGN.md](cli/DESIGN.md) · [backends/dbt/DESIGN.md](backends/dbt/DESIGN.md) · [backends/cube/DESIGN.md](backends/cube/DESIGN.md) · [ir/DESIGN.md](ir/DESIGN.md) · [parity/DESIGN.md](parity/DESIGN.md) · [transpiler/DESIGN.md](transpiler/DESIGN.md).
 
