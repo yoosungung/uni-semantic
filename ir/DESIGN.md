@@ -37,7 +37,7 @@
 
 | `$defs` | 부착 | 비고 |
 |---------|------|------|
-| `dialect` | `dimension`/`fact`/`metric` 선택 필드 | 방언 태그 문자열 |
+| `dialect` | `unresolved_expression.dialect`만 (`$ref`) | 방언 태그 문자열. 멤버 선택 필드 없음 |
 | `unresolved_expression` | 위 멤버의 `unresolved` | `dialect`+원본 식+`warning` |
 | `hierarchy` | `cube.hierarchies[]` | `name` + `levels`(≥2, unique, 거친→세밀); optional `description` |
 | `role_playing` | `cube.role_playing[]` | `base_dimension`+`role` |

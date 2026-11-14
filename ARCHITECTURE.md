@@ -62,7 +62,7 @@ BI Matrix (Excel)   ──┘   │ (table, view, cube, metric…)  │
 
 | 식별자 | 역할 |
 |--------|------|
-| `dialect` | 식·문서의 방언 태그(`dax` / `lookml` / `lod` / `mstr` / `sql` 등). provenance는 별도 필드명이 아니라 `dialect`(+원본 식)로 표현한다. |
+| `dialect` | `$defs/dialect` 타입 — `unresolved_expression.dialect`용 방언 태그(`dax` / `lookml` / `lod` / `mstr` / `sql` 등). dimension/fact/metric 멤버 선택 필드는 두지 않는다. |
 | `unresolved_expression` | 자동 변환 불가 식. `dialect`, 원본 텍스트, 경고를 보존한다. |
 | `hierarchy` | 계층 구조 (`cube.hierarchies[]`: `name`+`levels`≥2; optional `description`) |
 | `role_playing` | Role-Playing Dimension |

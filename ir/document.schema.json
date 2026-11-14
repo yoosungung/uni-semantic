@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://uni-semantic.local/ir/document.schema.json",
   "title": "Universal Semantic IR document",
-  "description": "Universal Semantic IR 문서 한 건(kind로 구분). 출발 복사본: sql-mcp semantic/schema/document.schema.json ($id https://sql-mcp.local/semantic/document.schema.json). 런타임은 sql-mcp 패키지/경로를 참조하지 않는다. ARCHITECTURE §3 확장: dialect, unresolved_expression, hierarchy, role_playing, snowflake_path.",
+  "description": "Universal Semantic IR 문서 한 건(kind로 구분). 출발 복사본: sql-mcp semantic/schema/document.schema.json ($id https://sql-mcp.local/semantic/document.schema.json). 런타임은 sql-mcp 패키지/경로를 참조하지 않는다. ARCHITECTURE §3 확장: dialect($defs — unresolved_expression.dialect용; 멤버 선택 필드 없음), unresolved_expression, hierarchy, role_playing, snowflake_path.",
   "oneOf": [
     {
       "$ref": "#/$defs/table"
@@ -715,10 +715,6 @@
         "role": {
           "$ref": "#/$defs/role"
         },
-        "dialect": {
-          "$ref": "#/$defs/dialect",
-          "description": "이 멤버 식의 방언 태그(선택)."
-        },
         "unresolved": {
           "$ref": "#/$defs/unresolved_expression",
           "description": "자동 변환 불가 식 보존(선택). column/expression과 병행 가능 — emit 시 unresolved 우선 경고."
@@ -781,10 +777,6 @@
         },
         "role": {
           "$ref": "#/$defs/role"
-        },
-        "dialect": {
-          "$ref": "#/$defs/dialect",
-          "description": "이 멤버 식의 방언 태그(선택)."
         },
         "unresolved": {
           "$ref": "#/$defs/unresolved_expression",
@@ -891,10 +883,6 @@
         "role": {
           "$ref": "#/$defs/role"
         },
-        "dialect": {
-          "$ref": "#/$defs/dialect",
-          "description": "이 멤버 식의 방언 태그(선택)."
-        },
         "unresolved": {
           "$ref": "#/$defs/unresolved_expression",
           "description": "자동 변환 불가 식 보존(선택). column/expression과 병행 가능 — emit 시 unresolved 우선 경고."
@@ -981,7 +969,7 @@
     "dialect": {
       "type": "string",
       "minLength": 1,
-      "description": "식·문서 방언 태그. 예: dax, lookml, lod, mstr, sql. provenance는 별도 필드 없이 dialect(+원본 식)로 표현."
+      "description": "방언 태그 타입(unresolved_expression.dialect용). 예: dax, lookml, lod, mstr, sql. dimension/fact/metric 멤버 선택 필드는 아님."
     },
     "unresolved_expression": {
       "title": "Unresolved expression",

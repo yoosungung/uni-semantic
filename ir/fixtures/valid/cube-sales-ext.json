@@ -18,7 +18,6 @@
       "description": "주문 연도.",
       "type": "date",
       "expression": "date_trunc('year', order_date)",
-      "dialect": "sql",
       "encryption": false,
       "role": "all"
     },
@@ -45,7 +44,6 @@
       "description": "DAX 마진(변환 불가 예시).",
       "type": "amount",
       "expression": "0",
-      "dialect": "dax",
       "unresolved": {
         "dialect": "dax",
         "expression": "CALCULATE([Sales], USERELATIONSHIP(ShipDate[Date], Dates[Date]))",
